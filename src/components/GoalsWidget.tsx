@@ -19,12 +19,18 @@ type GoalsWidgetProps = {
 
 export function GoalsWidget({ goals, onAddGoal, onUpdateProgress, onToggleMilestone }: GoalsWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [newGoal, setNewGoal] = useState({
+  const [newGoal, setNewGoal] = useState<{
+    title: string;
+    description: string;
+    category: 'short' | 'long';
+    targetDate: string;
+    milestones: Milestone[];
+  }>({
     title: '',
     description: '',
-    category: 'short' as const,
+    category: 'short',
     targetDate: '',
-    milestones: [] as Milestone[],
+    milestones: [],
   });
   const [milestoneInput, setMilestoneInput] = useState('');
 
@@ -107,7 +113,7 @@ export function GoalsWidget({ goals, onAddGoal, onUpdateProgress, onToggleMilest
                   <select
                     id="goal-category"
                     value={newGoal.category}
-                    onChange={(e) => setNewGoal({ ...newGoal, category: e.target.value as 'short' | 'long' })}
+                    onChange={(e) => setNewGoal({ ...newGoal, category: e.target.value as Goal['category'] })}
                     className="w-full h-10 px-3 rounded-md border border-input bg-background"
                   >
                     <option value="short">Short-term</option>
@@ -161,8 +167,8 @@ export function GoalsWidget({ goals, onAddGoal, onUpdateProgress, onToggleMilest
           goals.map((goal) => {
             const completedMilestones = goal.milestones.filter(m => m.completed).length;
             const totalMilestones = goal.milestones.length;
-            const milestoneProgress = totalMilestones > 0 
-              ? (completedMilestones / totalMilestones) * 100 
+            const milestoneProgress = totalMilestones > 0
+              ? (completedMilestones / totalMilestones) * 100
               : goal.progress;
 
             return (
@@ -178,7 +184,7 @@ export function GoalsWidget({ goals, onAddGoal, onUpdateProgress, onToggleMilest
                     <p className="text-sm text-muted-foreground">{goal.description}</p>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded ${
-                    goal.category === 'short' 
+                    goal.category === 'short'
                       ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                       : 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300'
                   }`}>

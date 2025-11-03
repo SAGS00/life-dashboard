@@ -176,7 +176,7 @@ export function JournalWidget({ entries, onAddEntry }: JournalWidgetProps) {
                                 })()}
                             </div>
                         )}
-                        <span className="text-sm">Today's Entry</span>
+                        <span className="text-sm">{`Today's Entry`}</span>
                     </div>
                     <p className="text-sm line-clamp-3">{todayEntry.content}</p>
                 </div>
