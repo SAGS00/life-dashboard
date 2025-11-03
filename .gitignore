@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# markdown files (except README.md)
-*.md
-!README.md
+# Internal documentation - keep repo professional
+IMPLEMENTATION_SUMMARY.md
+OPENSOURCE_SETUP.md
+GET_STARTED.md
+CONTRIBUTING_QUICKSTART.md
+.github/RELEASE_CHECKLIST.md
+.github/LABELS.md

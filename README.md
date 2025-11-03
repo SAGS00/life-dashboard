@@ -86,10 +86,59 @@ A comprehensive personal dashboard for tracking habits, tasks, health, finances,
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Quick Start for Contributors
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
+
+## 📜 Documentation
+
+-   [Contributing Guidelines](CONTRIBUTING.md) - How to contribute to this project
+-   [Development Guide](DEVELOPMENT.md) - Setup and development workflow
+-   [Code of Conduct](CODE_OF_CONDUCT.md) - Community guidelines
+-   [Security](SECURITY.md) - Security notes and how to report vulnerabilities
+-   [Changelog](CHANGELOG.md) - Version history and changes
+
+## 🐛 Bug Reports & Feature Requests
+
+Found a bug or have a feature request? Please check our [issue tracker](https://github.com/SAGS00/life-dashboard/issues).
+
+-   [Report a Bug](https://github.com/SAGS00/life-dashboard/issues/new?template=bug_report.md)
+-   [Request a Feature](https://github.com/SAGS00/life-dashboard/issues/new?template=feature_request.md)
+
+## 📊 Project Status
+
+[![CI](https://github.com/SAGS00/life-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/SAGS00/life-dashboard/actions/workflows/ci.yml)
+![GitHub issues](https://img.shields.io/github/issues/SAGS00/life-dashboard)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/SAGS00/life-dashboard)
+![GitHub stars](https://img.shields.io/github/stars/SAGS00/life-dashboard)
+![GitHub forks](https://img.shields.io/github/forks/SAGS00/life-dashboard)
+
+## 🙏 Acknowledgments
+
+-   [Next.js](https://nextjs.org/) - The React framework for production
+-   [Radix UI](https://radix-ui.com/) - Unstyled, accessible components
+-   [shadcn/ui](https://ui.shadcn.com/) - Beautiful component collection
+-   [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+-   All contributors who help improve this project
+
 ## 📧 Contact
 
 Project Link: [https://github.com/SAGS00/life-dashboard](https://github.com/SAGS00/life-dashboard)
 
 ---
 
-Made with ❤️ using Next.js and TypeScript
+Made with ❤️ by the open-source community
+
+```
+
+```

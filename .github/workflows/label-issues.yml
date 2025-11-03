@@ -1,0 +1,61 @@
+name: Label Issues
+
+on:
+    issues:
+        types: [opened]
+
+jobs:
+    label:
+        runs-on: ubuntu-latest
+
+        permissions:
+            issues: write
+
+        steps:
+            - name: Label bugs
+              if: contains(github.event.issue.title, '[BUG]') || contains(github.event.issue.labels.*.name, 'bug')
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      github.rest.issues.addLabels({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        labels: ['bug', 'needs-triage']
+                      })
+
+            - name: Label features
+              if: contains(github.event.issue.title, '[FEATURE]') || contains(github.event.issue.labels.*.name, 'enhancement')
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      github.rest.issues.addLabels({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        labels: ['enhancement', 'needs-discussion']
+                      })
+
+            - name: Label docs
+              if: contains(github.event.issue.title, '[DOCS]') || contains(github.event.issue.labels.*.name, 'documentation')
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      github.rest.issues.addLabels({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        labels: ['documentation', 'good first issue']
+                      })
+
+            - name: Label questions
+              if: contains(github.event.issue.title, '[QUESTION]') || contains(github.event.issue.labels.*.name, 'question')
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      github.rest.issues.addLabels({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        labels: ['question']
+                      })
