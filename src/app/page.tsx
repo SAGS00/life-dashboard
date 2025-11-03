@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -22,24 +24,16 @@ import {
     Goal,
     Task,
     DashboardSettings,
-    Milestone,
 } from "@/types";
 import { LayoutDashboard, BarChart3 } from "lucide-react";
+import { APP_CONFIG, DEFAULT_ENABLED_MODULES } from "@/constants/app";
 
 const defaultSettings: DashboardSettings = {
-    theme: "light",
+    theme: APP_CONFIG.defaultTheme,
     accentColor: "blue",
-    enabledModules: [
-        "habits",
-        "journal",
-        "finance",
-        "health",
-        "goals",
-        "tasks",
-        "pomodoro",
-    ],
+    enabledModules: [...DEFAULT_ENABLED_MODULES],
     dailyReminders: false,
-    firstName: "Friend",
+    firstName: APP_CONFIG.defaultFirstName,
 };
 
 export default function App() {
@@ -83,7 +77,7 @@ export default function App() {
     }, [settings.theme]);
 
     // Habit management
-    const handleAddHabit = (
+    const handleAddHabit = useCallback((
         habit: Omit<Habit, "id" | "createdAt" | "completedDates">
     ) => {
         const newHabit: Habit = {
@@ -92,13 +86,13 @@ export default function App() {
             createdAt: new Date().toISOString(),
             completedDates: [],
         };
-        setHabits([...habits, newHabit]);
+        setHabits((prev) => [...prev, newHabit]);
         toast.success("Habit created successfully!");
-    };
+    }, [setHabits]);
 
-    const handleToggleHabit = (habitId: string, date: string) => {
-        setHabits(
-            habits.map((habit) => {
+    const handleToggleHabit = useCallback((habitId: string, date: string) => {
+        setHabits((prev) =>
+            prev.map((habit) => {
                 if (habit.id === habitId) {
                     const isCompleted = habit.completedDates.includes(date);
                     return {
@@ -111,88 +105,92 @@ export default function App() {
                 return habit;
             })
         );
-    };
+    }, [setHabits]);
 
-    const handleDeleteHabit = (habitId: string) => {
-        setHabits(habits.filter((h) => h.id !== habitId));
+    const handleDeleteHabit = useCallback((habitId: string) => {
+        setHabits((prev) => prev.filter((h) => h.id !== habitId));
         toast.success("Habit deleted");
-    };
+    }, [setHabits]);
 
     // Journal management
-    const handleAddJournalEntry = (
+    const handleAddJournalEntry = useCallback((
         entry: Omit<JournalEntry, "id" | "createdAt">
     ) => {
-        const existingEntry = journalEntries.find((e) => e.date === entry.date);
-        if (existingEntry) {
-            setJournalEntries(
-                journalEntries.map((e) =>
+        setJournalEntries((prev) => {
+            const existingEntry = prev.find((e) => e.date === entry.date);
+            if (existingEntry) {
+                toast.success("Journal entry updated!");
+                return prev.map((e) =>
                     e.date === entry.date
                         ? { ...e, ...entry, id: e.id, createdAt: e.createdAt }
                         : e
-                )
-            );
-            toast.success("Journal entry updated!");
-        } else {
-            const newEntry: JournalEntry = {
-                ...entry,
-                id: Date.now().toString(),
-                createdAt: new Date().toISOString(),
-            };
-            setJournalEntries([newEntry, ...journalEntries]);
-            toast.success("Journal entry saved!");
-        }
-    };
+                );
+            } else {
+                const newEntry: JournalEntry = {
+                    ...entry,
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                };
+                toast.success("Journal entry saved!");
+                return [newEntry, ...prev];
+            }
+        });
+    }, [setJournalEntries]);
 
     // Finance management
-    const handleAddExpense = (expense: Omit<Expense, "id">) => {
+    const handleAddExpense = useCallback((expense: Omit<Expense, "id">) => {
+        if (expense.amount <= 0) {
+            toast.error("Amount must be positive");
+            return;
+        }
         const newExpense: Expense = {
             ...expense,
             id: Date.now().toString(),
         };
-        setExpenses([newExpense, ...expenses]);
+        setExpenses((prev) => [newExpense, ...prev]);
         toast.success(
             `${expense.type === "income" ? "Income" : "Expense"} added!`
         );
-    };
+    }, [setExpenses]);
 
     // Health management
-    const handleAddHealthLog = (log: Omit<HealthLog, "id">) => {
-        const existingLog = healthLogs.find((l) => l.date === log.date);
-        if (existingLog) {
-            setHealthLogs(
-                healthLogs.map((l) =>
+    const handleAddHealthLog = useCallback((log: Omit<HealthLog, "id">) => {
+        setHealthLogs((prev) => {
+            const existingLog = prev.find((l) => l.date === log.date);
+            if (existingLog) {
+                toast.success("Health log updated!");
+                return prev.map((l) =>
                     l.date === log.date ? { ...log, id: l.id } : l
-                )
-            );
-            toast.success("Health log updated!");
-        } else {
-            const newLog: HealthLog = {
-                ...log,
-                id: Date.now().toString(),
-            };
-            setHealthLogs([newLog, ...healthLogs]);
-            toast.success("Health log saved!");
-        }
-    };
+                );
+            } else {
+                const newLog: HealthLog = {
+                    ...log,
+                    id: Date.now().toString(),
+                };
+                toast.success("Health log saved!");
+                return [newLog, ...prev];
+            }
+        });
+    }, [setHealthLogs]);
 
     // Goals management
-    const handleAddGoal = (goal: Omit<Goal, "id" | "createdAt">) => {
+    const handleAddGoal = useCallback((goal: Omit<Goal, "id" | "createdAt">) => {
         const newGoal: Goal = {
             ...goal,
             id: Date.now().toString(),
             createdAt: new Date().toISOString(),
         };
-        setGoals([...goals, newGoal]);
+        setGoals((prev) => [...prev, newGoal]);
         toast.success("Goal created!");
-    };
+    }, [setGoals]);
 
-    const handleUpdateGoalProgress = (goalId: string, progress: number) => {
-        setGoals(goals.map((g) => (g.id === goalId ? { ...g, progress } : g)));
-    };
+    const handleUpdateGoalProgress = useCallback((goalId: string, progress: number) => {
+        setGoals((prev) => prev.map((g) => (g.id === goalId ? { ...g, progress } : g)));
+    }, [setGoals]);
 
-    const handleToggleMilestone = (goalId: string, milestoneId: string) => {
-        setGoals(
-            goals.map((goal) => {
+    const handleToggleMilestone = useCallback((goalId: string, milestoneId: string) => {
+        setGoals((prev) =>
+            prev.map((goal) => {
                 if (goal.id === goalId) {
                     return {
                         ...goal,
@@ -206,40 +204,40 @@ export default function App() {
                 return goal;
             })
         );
-    };
+    }, [setGoals]);
 
     // Task management
-    const handleAddTask = (task: Omit<Task, "id" | "createdAt">) => {
+    const handleAddTask = useCallback((task: Omit<Task, "id" | "createdAt">) => {
         const newTask: Task = {
             ...task,
             id: Date.now().toString(),
             createdAt: new Date().toISOString(),
         };
-        setTasks([...tasks, newTask]);
+        setTasks((prev) => [...prev, newTask]);
         toast.success("Task created!");
-    };
+    }, [setTasks]);
 
-    const handleUpdateTaskStatus = (taskId: string, status: Task["status"]) => {
-        setTasks(tasks.map((t) => (t.id === taskId ? { ...t, status } : t)));
+    const handleUpdateTaskStatus = useCallback((taskId: string, status: Task["status"]) => {
+        setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status } : t)));
         if (status === "done") {
             toast.success("Task completed! 🎉");
         }
-    };
+    }, [setTasks]);
 
-    const handleDeleteTask = (taskId: string) => {
-        setTasks(tasks.filter((t) => t.id !== taskId));
+    const handleDeleteTask = useCallback((taskId: string) => {
+        setTasks((prev) => prev.filter((t) => t.id !== taskId));
         toast.success("Task deleted");
-    };
+    }, [setTasks]);
 
     // Settings management
-    const handleToggleTheme = () => {
-        setSettings({
-            ...settings,
-            theme: settings.theme === "light" ? "dark" : "light",
-        });
-    };
+    const handleToggleTheme = useCallback(() => {
+        setSettings((prev) => ({
+            ...prev,
+            theme: prev.theme === "light" ? "dark" : "light",
+        }));
+    }, [setSettings]);
 
-    const handleExportData = () => {
+    const handleExportData = useCallback(() => {
         const data = {
             habits,
             journalEntries,
@@ -262,11 +260,17 @@ export default function App() {
         a.click();
         URL.revokeObjectURL(url);
         toast.success("Data exported successfully!");
-    };
+    }, [habits, journalEntries, expenses, healthLogs, goals, tasks, settings]);
 
-    const handleImportData = (jsonString: string) => {
+    const handleImportData = useCallback((jsonString: string) => {
         try {
             const data = JSON.parse(jsonString);
+
+            // Validate data structure before importing
+            if (typeof data !== 'object' || data === null) {
+                throw new Error('Invalid data format');
+            }
+
             if (data.habits) setHabits(data.habits);
             if (data.journalEntries) setJournalEntries(data.journalEntries);
             if (data.expenses) setExpenses(data.expenses);
@@ -276,12 +280,12 @@ export default function App() {
             if (data.settings) setSettings(data.settings);
             toast.success("Data imported successfully!");
             setSettingsOpen(false);
-        } catch (error) {
+        } catch {
             toast.error("Failed to import data. Please check the file format.");
         }
-    };
+    }, [setHabits, setJournalEntries, setExpenses, setHealthLogs, setGoals, setTasks, setSettings]);
 
-    const handleClearAllData = () => {
+    const handleClearAllData = useCallback(() => {
         setHabits([]);
         setJournalEntries([]);
         setExpenses([]);
@@ -289,10 +293,11 @@ export default function App() {
         setGoals([]);
         setTasks([]);
         toast.success("All data cleared");
-    };
+    }, [setHabits, setJournalEntries, setExpenses, setHealthLogs, setGoals, setTasks]);
 
-    const isModuleEnabled = (moduleId: string) =>
-        settings.enabledModules.includes(moduleId);
+    const isModuleEnabled = useCallback((moduleId: string) =>
+        settings.enabledModules.includes(moduleId)
+    , [settings.enabledModules]);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
